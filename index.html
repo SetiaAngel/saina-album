@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>StreamHub Pro</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    /* ===== GLOBAL RESET ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #050507;
+      color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 10px;
+    }
+
+    /* ===== MAIN STAGE ===== */
+    #stage {
+      width: 100%;
+      max-width: 1200px;
+      aspect-ratio: 16 / 9;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #0c0d10;
+      font-family: sans-serif;
+      color: #f2f2f2;
+      display: flex;
+      position: relative;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 34%;
+      background: linear-gradient(180deg, #1a1a1f, #0c0d10 30%, #0a0a0d);
+      padding: 20px 12px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow-y: auto;
+      border-right: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .sidebar .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-left: 4px;
+    }
+    .sidebar .logo .icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #3355cc, #7744dd);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .sidebar .logo span {
+      font-size: 14px;
+      color: #f2f2f2;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .sidebar .logo .version {
+      font-size: 9px;
+      color: #6a6a72;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: auto;
+    }
+    .sidebar .section-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #6a6a72;
+      padding: 4px 8px 6px 8px;
+      font-weight: 600;
+    }
+    .sidebar .navitem {
+      all: unset;
+      cursor: pointer;
+      padding: 10px 12px;
+      font-size: 12.5px;
+      border-radius: 6px;
+      margin-bottom: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #9a9aa2;
+      border-left: 3px solid transparent;
+      transition: all 0.2s ease;
+      font-weight: 400;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sidebar .navitem:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #f2f2f2;
+      transform: scale(1.02);
+    }
+    .sidebar .navitem.active {
+      background: rgba(51, 85, 204, 0.15);
+      color: #f2f2f2;
+      font-weight: 500;
+      border-left: 3px solid #3355cc;
+    }
+    .sidebar .navitem i {
+      font-size: 16px;
+      opacity: 0.7;
+    }
+    .sidebar .navitem.active i {
+      color: #3355cc;
+      opacity: 1;
+    }
+    .sidebar .navitem .check {
+      margin-left: auto;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .sidebar .navitem.active .check {
+      opacity: 1;
+      color: #3355cc;
+    }
+    .sidebar .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+      margin: 6px 8px 10px;
+    }
+    .sidebar .footer {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    .sidebar .footer .user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .sidebar .footer .user:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .sidebar .footer .user .avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3355cc, #7744dd);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .sidebar .footer .user .name {
+      font-size: 11px;
+      color: #c9c7cf;
+    }
+    .sidebar .footer .user .plan {
+      font-size: 9px;
+      color: #6a6a72;
+    }
+    .sidebar .footer .user .arrow {
+      margin-left: auto;
+      font-size: 12px;
+      color: #6a6a72;
+    }
+    .sidebar .footer .powered {
+      text-align: center;
+      font-size: 9px;
+      color: #3a3a42;
+      padding-top: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+      width: 66%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ===== HOME PAGE ===== */
+    #page-deadline {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      display: block;
+    }
+    #page-deadline .bg-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    #page-deadline .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 1;
+    }
+    #page-deadline .content {
+      position: relative;
+      z-index: 2;
+      padding: 26px 32px 20px;
+      height: 100%;
+      overflow-y: auto;
+    }
+    #page-deadline .content .title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    }
+    #page-deadline .content .sub {
+      font-size: 12.5px;
+      color: #e8d4bd;
+      margin-top: 6px;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+    }
+    #page-deadline .content .divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.15);
+      margin: 14px 0;
+    }
+
+    /* Chapter list */
+    .chapter {
+      all: unset;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14.5px;
+      transition: all 0.2s ease;
+      color: #c9c7cf;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chapter:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .chapter.active-chapter {
+      background: rgba(255, 107, 107, 0.15);
+      color: #ffb35c;
+      border-left: 3px solid #ff69b4;
+    }
+    .chapter.active-chapter .playing-indicator {
+      display: inline !important;
+    }
+    .chapter .playing-indicator {
+      display: none;
+      margin-left: auto;
+      font-size: 10px;
+      color: #ffb35c;
+    }
+
+    /* Album preview grid */
+    .album-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .album-box {
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      cursor: pointer;
+      position: relative;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: transform 0.2s;
+      aspect-ratio: 1/1;
+    }
+    .album-box:hover {
+      transform: scale(1.05);
+    }
+    .album-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .album-box .label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+      padding: 12px 10px 8px;
+      pointer-events: none;
+    }
+    .album-box .label .title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .album-box .label .sub {
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* ===== VIDEO PAGES ===== */
+    .video-page {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: #0c0d10;
+      overflow-y: auto;
+    }
+    .video-page .backbtn {
+      all: unset;
+      cursor: pointer;
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      font-size: 12px;
+      color: #c9c7cf;
+      z-index: 2;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .video-page .backbtn:hover {
+      color: #f2f2f2;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .video-page .video-container {
+      padding: 48px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .video-page .video-container .video-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .video-page .video-container .video-title .lyrics-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #ffb35c;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .video-page .video-container .video-title .lyrics-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .video-page .video-container .video-wrapper {
+      width: 95%;
+      aspect-ratio: 16 / 9;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+    }
+    .video-page .video-container .video-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Lyrics overlay */
+    .lyrics-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .lyrics-overlay .panel {
+      background: #1a1a1f;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+    .lyrics-overlay .panel .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: #ffb35c;
+      font-size: 24px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .lyrics-overlay .panel h3 {
+      color: #ffb35c;
+      margin-bottom: 12px;
+    }
+    .lyrics-overlay .panel .lyrics-text {
+      color: #c9c7cf;
+      font-size: 14px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+
+    /* ===== GALLERY PAGE ===== */
+    #page-gallery {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: #0c0d10;
+      overflow-y: auto;
+      padding: 24px 32px 20px;
+    }
+    #page-gallery .gallery-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    #page-gallery .gallery-header .backbtn {
+      all: unset;
+      cursor: pointer;
+      font-size: 12px;
+      color: #c9c7cf;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      -webkit-tap-highlight-color: transparent;
+    }
+    #page-gallery .gallery-header .backbtn:hover {
+      color: #f2f2f2;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    #page-gallery .gallery-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff69b4, #ffb35c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+    }
+    .gallery-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .gallery-card:hover {
+      transform: scale(1.03);
+    }
+    .gallery-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .gallery-card .caption {
+      padding: 10px;
+      font-size: 12px;
+      color: #c9c7cf;
+      text-align: center;
+    }
+
+    /* ===== GALLERY MODAL ===== */
+    #galleryModal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.92);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #galleryModal.show {
+      display: flex;
+      opacity: 1;
+    }
+    #galleryModal .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #galleryModal .close-btn:hover {
+      color: #ffb6c1;
+    }
+    #galleryModal img {
+      max-width: 85%;
+      max-height: 75vh;
+      border-radius: 8px;
+      box-shadow: 0 0 30px rgba(255, 105, 180, 0.3);
+    }
+    #galleryModal .caption {
+      color: #ffb6c1;
+      font-size: 1.2rem;
+      margin: 12px 0;
+      font-weight: bold;
+    }
+    #galleryModal .download-btn {
+      background: #ff4500;
+      color: #fff;
+      padding: 10px 24px;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 20px;
+      box-shadow: 0 0 12px rgba(255, 69, 0, 0.5);
+      transition: 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #galleryModal .download-btn:hover {
+      background: #ff1493;
+      transform: scale(1.05);
+    }
+
+    /* ===== BLANK PAGE ===== */
+    #page-blank {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: #15161a;
+      align-items: center;
+      justify-content: center;
+    }
+    #page-blank .message {
+      color: #7a7a82;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    /* ===== FIREBALL EFFECT ===== */
+    .fire-ball {
+      position: fixed;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffdd66 0%, #ff6600 45%, #cc1100 75%, transparent 100%);
+      box-shadow: 0 0 35px #ff5500, 0 0 70px #ff2200;
+      pointer-events: none;
+      z-index: 999999;
+      transform: translate(-50%, -50%) scale(0.3);
+      animation: expandFire 0.5s ease-out forwards;
+    }
+    @keyframes expandFire {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(0.3); }
+      70% { opacity: 0.8; transform: translate(-50%, -50%) scale(2.2); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(2.8); }
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      #stage {
+        aspect-ratio: auto;
+        flex-direction: column;
+        height: auto;
+        border-radius: 10px;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        padding: 14px 10px;
+        max-height: 200px;
+      }
+      .main-content {
+        width: 100%;
+        min-height: 60vh;
+      }
+      .album-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      #page-deadline .content {
+        padding: 16px;
+      }
+      .video-page .video-container {
+        padding: 40px 12px 16px;
+      }
+      .video-page .video-container .video-wrapper {
+        width: 100%;
+      }
+      #page-gallery {
+        padding: 16px;
+      }
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .sidebar .navitem {
+        padding: 12px 10px;
+        font-size: 14px;
+      }
+      .chapter {
+        padding: 12px 10px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .album-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+      .album-box .label .title {
+        font-size: 10px;
+      }
+      .album-box .label .sub {
+        font-size: 8px;
+      }
+      .video-page .video-container .video-title {
+        font-size: 16px;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      #galleryModal img {
+        max-width: 95%;
+        max-height: 70vh;
+      }
+    }
+  </style><link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="logo">
+      <div class="icon">S</div>
+      <span>StreamHub Pro</span>
+      <span class="version">v3.2</span>
+    </div>
+
+    <div class="section-label">Browse</div>
+
+    <button class="navitem active" data-page="deadline">
+      <i class="ti ti-home"></i>
+      <span>Home</span>
+      <i class="ti ti-check check"></i>
+    </button>
+
+    <button class="navitem" data-page="gallery">
+      <i class="ti ti-photo"></i>
+      <span>Gallery</span>
+      <i class="ti ti-check check"></i>
+    </button>
+
+    <button class="navitem" data-page="blank">
+      <i class="ti ti-film"></i>
+      <span>Movies</span>
+      <i class="ti ti-check check"></i>
+    </button>
+
+    <button class="navitem" data-page="blank">
+      <i class="ti ti-device-tv"></i>
+      <span>TV Shows</span>
+      <i class="ti ti-check check"></i>
+    </button>
+
+    <div class="divider"></div>
+
+    <div class="section-label">Media</div>
+
+    <button class="navitem" data-page="blank">
+      <i class="ti ti-music"></i>
+      <span>Music</span>
+      <i class="ti ti-check check"></i>
+    </button>
+
+    <button class="navitem" data-page="blank">
+      <i class="ti ti-users"></i>
+      <span>Kids</span>
+      <i class="ti ti-check check"></i>
+    </button>
+
+    <button class="navitem" data-page="blank">
+      <i class="ti ti-heart"></i>
+      <span>Family</span>
+      <i class="ti ti-check check"></i>
+    </button>
+
+    <div class="footer">
+      <div class="user" onclick="alert('Profile')">
+        <div class="avatar">BP</div>
+        <div>
+          <div class="name">Blackpink User</div>
+          <div class="plan">Premium</div>
+        </div>
+        <i class="ti ti-chevron-right arrow"></i>
+      </div>
+      <div class="powered">Powered by StreamHub Pro &bull; v3.2.1</div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main-content">
+
+    <!-- ===== HOME PAGE ===== -->
+    <div id="page-deadline">
+      <video class="bg-video" autoplay muted loop playsinline>
+        <source src="bg-video/home-bg.mp4" type="video/mp4">
+      </video>
+      <div class="overlay"></div>
+      <div class="content">
+        <div class="title">Deadline &mdash; Blackpink</div>
+        <div class="sub">2026 &middot; K-Pop &middot; Official Video Experience</div>
+        <div class="divider"></div>
+
+        <!-- CHAPTER LIST -->
+        <div style="display:flex;flex-direction:column;gap:6px;" id="chapterlist">
+          <button class="chapter" id="ch-go" onclick="openVideo('5. GO_Official.mp4','Chapter 1 - GO','go')">
+            <i class="ti ti-player-play"></i><span>Chapter 1 &mdash; GO</span>
+            <span class="playing-indicator">▶ PLAYING</span>
+          </button>
+          <button class="chapter" id="ch-jump" onclick="openVideo('6. Jump_Official.mp4','Chapter 2 - JUMP','jump')">
+            <i class="ti ti-player-play"></i><span>Chapter 2 &mdash; JUMP</span>
+            <span class="playing-indicator">▶ PLAYING</span>
+          </button>
+          <button class="chapter" id="ch-champion" onclick="openVideo('7. Champion_Official.mp4','Chapter 3 - CHAMPION','champion')">
+            <i class="ti ti-player-play"></i><span>Chapter 3 &mdash; CHAMPION</span>
+            <span class="playing-indicator">▶ PLAYING</span>
+          </button>
+          <button class="chapter" id="ch-fxxxboy" onclick="openVideo('8. FXXXBOY_Official.mp4','Chapter 4 - FXXXBOY','fxxxboy')">
+            <i class="ti ti-player-play"></i><span>Chapter 4 &mdash; FXXXBOY</span>
+            <span class="playing-indicator">▶ PLAYING</span>
+          </button>
+          <button class="chapter" id="ch-chapter5" onclick="openVideo('9. BLACKPINK - DEADLINE JACKET MAKING FILM.mp4','Chapter 5 - JACKET MAKING','chapter5')">
+            <i class="ti ti-player-play"></i><span>Chapter 5 &mdash; JACKET MAKING</span>
+            <span class="playing-indicator">▶ PLAYING</span>
+          </button>
+          <button class="chapter" id="ch-chapter6" onclick="openVideo('10. BLACKPINK - WORLD TOUR [DEADLINE] IN HONG KONG Behind the Scenes.mp4','Chapter 6 - HONG KONG BTS','chapter6')">
+            <i class="ti ti-player-play"></i><span>Chapter 6 &mdash; HONG KONG BTS</span>
+            <span class="playing-indicator">▶ PLAYING</span>
+          </button>
+          <button class="chapter" id="ch-chapter7" onclick="openVideo('11. GOLDEN_DISc.mp4','Chapter 7 - GOLDEN DISC','chapter7')">
+            <i class="ti ti-player-play"></i><span>Chapter 7 &mdash; GOLDEN DISC</span>
+            <span class="playing-indicator">▶ PLAYING</span>
+          </button>
+        </div>
+
+        <!-- ALBUM PREVIEWS -->
+        <div style="margin-top:24px;">
+          <div style="font-size:13px;font-weight:600;color:#e8d4bd;margin-bottom:12px;text-shadow:0 0 10px rgba(0,0,0,0.5);">📀 Album Previews</div>
+          <div class="album-grid">
+            <div class="album-box" onclick="openVideo('5. GO_Official.mp4','Chapter 1 - GO','go')">
+              <video src="thumbnails/5. GO_Official.mp4" muted loop playsinline onmouseenter="this.play()" onmouseleave="this.pause(); this.currentTime=0;"></video>
+              <div class="label"><div class="title">GO</div><div class="sub">Chapter 1</div></div>
+            </div>
+            <div class="album-box" onclick="openVideo('6. Jump_Official.mp4','Chapter 2 - JUMP','jump')">
+              <video src="thumbnails/6. Jump_Official.mp4" muted loop playsinline onmouseenter="this.play()" onmouseleave="this.pause(); this.currentTime=0;"></video>
+              <div class="label"><div class="title">JUMP</div><div class="sub">Chapter 2</div></div>
+            </div>
+            <div class="album-box" onclick="openVideo('7. Champion_Official.mp4','Chapter 3 - CHAMPION','champion')">
+              <video src="thumbnails/7. Champion_Official.mp4" muted loop playsinline onmouseenter="this.play()" onmouseleave="this.pause(); this.currentTime=0;"></video>
+              <div class="label"><div class="title">CHAMPION</div><div class="sub">Chapter 3</div></div>
+            </div>
+            <div class="album-box" onclick="openVideo('8. FXXXBOY_Official.mp4','Chapter 4 - FXXXBOY','fxxxboy')">
+              <video src="thumbnails/8. FXXXBOY_Official.mp4" muted loop playsinline onmouseenter="this.play()" onmouseleave="this.pause(); this.currentTime=0;"></video>
+              <div class="label"><div class="title">FXXXBOY</div><div class="sub">Chapter 4</div></div>
+            </div>
+            <div class="album-box" onclick="openVideo('9. BLACKPINK - DEADLINE JACKET MAKING FILM.mp4','Chapter 5 - JACKET MAKING','chapter5')">
+              <video src="thumbnails/9. BLACKPINK - DEADLINE JACKET MAKING FILM.mp4" muted loop playsinline onmouseenter="this.play()" onmouseleave="this.pause(); this.currentTime=0;"></video>
+              <div class="label"><div class="title">JACKET MAKING</div><div class="sub">Chapter 5</div></div>
+            </div>
+            <div class="album-box" onclick="openVideo('10. BLACKPINK - WORLD TOUR [DEADLINE] IN HONG KONG Behind the Scenes.mp4','Chapter 6 - HONG KONG BTS','chapter6')">
+              <video src="thumbnails/10. BLACKPINK - WORLD TOUR [DEADLINE] IN HONG KONG Behind the Scenes.mp4" muted loop playsinline onmouseenter="this.play()" onmouseleave="this.pause(); this.currentTime=0;"></video>
+              <div class="label"><div class="title">HONG KONG BTS</div><div class="sub">Chapter 6</div></div>
+            </div>
+            <div class="album-box" onclick="openVideo('11. GOLDEN_DISc.mp4','Chapter 7 - GOLDEN DISC','chapter7')">
+              <video src="thumbnails/11. GOLDEN_DISc.mp4" muted loop playsinline onmouseenter="this.play()" onmouseleave="this.pause(); this.currentTime=0;"></video>
+              <div class="label"><div class="title">GOLDEN DISC</div><div class="sub">Chapter 7</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== VIDEO PAGES ===== -->
+    <!-- GO -->
+    <div id="page-go" class="video-page">
+      <button class="backbtn" onclick="showPage('deadline')">&#8592; BACK</button>
+      <div class="video-container">
+        <div class="video-title">
+          <span>GO &mdash; Chapter 1</span>
+          <button class="lyrics-btn" onclick="toggleLyrics('go')">📝 Lyrics</button>
+        </div>
+        <div class="video-wrapper">
+          <video id="video-go" controls playsinline>
+            <source src="videos/5. GO_Official.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div id="lyrics-go" class="lyrics-overlay">
+        <div class="panel">
+          <button class="close-btn" onclick="toggleLyrics('go')">✕</button>
+          <h3>🎤 GO — Lyrics</h3>
+          <div class="lyrics-text">
+[Verse 1]
+I'm on a mission, I'm in control
+I want your body, I want your soul
+Here to the rescue, I'm number one
+Your guardian angel, your kingdom come
+
+[Pre-Chorus]
+March to the beat of, beat of my drum
+'Cause when I call you, you're gonna come
+Hold in position, it's gonna blow
+You only move when, when I say so
+
+[Chorus]
+Go
+BLACKPINK'll make ya
+Go
+BLACKPINK'll make ya
+
+[Verse 2]
+Go get it, I'ma go get it
+Never gonna settle for second, I need a gold medal
+Get up on the floor, tell me when to go, no slow jams
+Bumpin' through the speakers when I do my go-go dance
+Oh, no, I go when I wanna go, I'm so gone
+Go reckless, go off, like, "What could go wrong?"
+I'm goin' all in, you should know that's my go-to
+My whole crew with me, if I go, then they go too
+
+[Pre-Chorus]
+March to the beat of, beat of my drum
+'Cause when I call you, you're gonna come
+Hold in position, it's gonna blow
+You only move when, when I say so
+
+[Chorus]
+Go
+BLACKPINK'll make ya
+Go
+BLACKPINK'll make ya
+
+[Bridge]
+When your heart is broken, baby
+Darkness on the edge of town (BLACKPINK'll make ya)
+Try to keep it open, baby
+Try to let your walls come down (BLACKPINK'll make ya)
+I know you're frozen, baby
+Love can make you turn to stone
+You could stop and be alone
+Or you could (Ah, ah, ah)
+
+[Chorus]
+Go
+BLACKPINK'll make ya
+무야호 (I'm on a mission)
+
+[Outro]
+BLACKPINK, BLACKPINK
+BLACKPINK, BLACKPINK
+BLACKPINK, BLACKPINK
+BLACKPINK, BLACKPINK (Mission)
+BLACKPINK, BLACKPINK
+BLACKPINK, BLACKPINK
+BLACKPINK, BLACKPINK
+BLACKPINK, BLACKPINK
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JUMP -->
+    <div id="page-jump" class="video-page">
+      <button class="backbtn" onclick="showPage('deadline')">&#8592; BACK</button>
+      <div class="video-container">
+        <div class="video-title">
+          <span>JUMP &mdash; Chapter 2</span>
+          <button class="lyrics-btn" onclick="toggleLyrics('jump')">📝 Lyrics</button>
+        </div>
+        <div class="video-wrapper">
+          <video id="video-jump" controls playsinline>
+            <source src="videos/6. Jump_Official.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div id="lyrics-jump" class="lyrics-overlay">
+        <div class="panel">
+          <button class="close-btn" onclick="toggleLyrics('jump')">✕</button>
+          <h3>🎤 JUMP — Lyrics</h3>
+          <div class="lyrics-text">
+[Verse 1]
+I'm not that easy to tame
+You should see me under these lights
+All my tears turn to ice
+That's the sweetest escape
+Every time the feeling kicks in
+I might stay through the night
+Bet you get it now
+Rocked that didn't I
+착각 하지마 누가 누군지
+Think you runnin' that
+Guess we gunnin' back
+You know I walk it, yeah I talk it
+눈감고 하나 둘 셋
+
+[Chorus]
+뛰어
+뛰어
+뛰어
+뛰어
+뛰어
+So come up with me, I'll take you high
+That prima donna spice up your life
+You know I got that that you like
+So come up with me, run up
+
+[Post-Chorus]
+Jump
+Watch me runnin' up the place
+I'm already stuntin' and my girls are on the way
+Watch me open up the place
+Wanna see you bumpin' baby
+Bouncin' to the bass
+
+[Verse 2]
+Are you not entertained
+I ain't gotta explain it
+I'm with all of my sisters
+Got 'em goin' insane, yeah
+You know we on a mission
+All gas no brakes, yeah
+Breaking out of the system
+Breaking out of this cage, yeah
+Bet you get it now
+Ate that didn't I
+순간 잊지마 누가 누군지
+Think you runnin' that
+Guess we gunnin' back
+You know I walk it, yeah I talk it
+눈감고 하나 둘 셋
+
+[Chorus]
+뛰어
+뛰어
+뛰어
+뛰어
+뛰어
+So come up with me, I'll take you high
+That prima donna spice up your life
+You know I got that that you like
+So come up with me, run up
+
+[Post-Chorus]
+Jump
+Watch me runnin' up the place
+I'm already stuntin' and my girls are on the way
+Watch me open up the place
+Wanna see you bumpin' baby
+Bouncin' to the bass
+
+[Outro]
+BLACKPINK in your area
+뛰어
+뛰어
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAMPION -->
+    <div id="page-champion" class="video-page">
+      <button class="backbtn" onclick="showPage('deadline')">&#8592; BACK</button>
+      <div class="video-container">
+        <div class="video-title">
+          <span>CHAMPION &mdash; Chapter 3</span>
+          <button class="lyrics-btn" onclick="toggleLyrics('champion')">📝 Lyrics</button>
+        </div>
+        <div class="video-wrapper">
+          <video id="video-champion" controls playsinline>
+            <source src="videos/7. Champion_Official.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div id="lyrics-champion" class="lyrics-overlay">
+        <div class="panel">
+          <button class="close-btn" onclick="toggleLyrics('champion')">✕</button>
+          <h3>🎤 CHAMPION — Lyrics</h3>
+          <div class="lyrics-text">
+[Verse 1]
+Ain't quittin', I trust my intuition (okay)
+Time tickin', but they don't see the vision (okay)
+I ain't givin' up, no, I ain't willin' (okay)
+I be winnin' like it's an addiction
+
+[Pre-Chorus]
+Head high, run into the sky
+I live in the clouds
+No lie, look into my eyes
+You can't take me out
+
+[Chorus]
+If I ever, ever fall down one time
+I'ma keep goin' on, 'cause I know I'm a champion
+And if I take a, take a L, I'll still fight
+'Til the bitter end, I'm strong, 'cause I know I'm a champion
+
+[Verse 2]
+Pull up, four in a Sprinter (okay)
+We eat losers for dinner (okay)
+Hit hard, hard like a heart attack (okay)
+Same team, girl, yeah, I got your back
+
+[Pre-Chorus]
+Head high, run into the sky
+I live in the clouds (and I'm lookin' over you)
+No lie, look into my eyes
+You can't take me out (even if you wanted to)
+
+[Chorus]
+If I ever, ever fall down one time
+I'ma keep goin' on, 'cause I know I'm a champion
+And if I take a, take a L, I'll still fight
+'Til the bitter end, I'm strong, 'cause I know I'm a champion
+
+[Bridge]
+(Champion)
+(I'm a champion)
+(Champion)
+(I'm a champion)
+BLACKPINK, BLACKPINK, BLACKPINK, BLACKPINK
+BLACKPINK, BLACKPINK, BLACKPINK, BLACKPINK
+BLACKPINK, BLACKPINK, BLACKPINK, BLACKPINK
+
+[Chorus]
+If I ever, ever fall down one time
+I'ma keep goin' on, 'cause I know I'm a champion
+And if I take a, take a L, I'll still fight
+'Til the bitter end, I'm strong, 'cause I know I'm a champion
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FXXXBOY -->
+    <div id="page-fxxxboy" class="video-page">
+      <button class="backbtn" onclick="showPage('deadline')">&#8592; BACK</button>
+      <div class="video-container">
+        <div class="video-title">
+          <span>FXXXBOY &mdash; Chapter 4</span>
+          <button class="lyrics-btn" onclick="toggleLyrics('fxxxboy')">📝 Lyrics</button>
+        </div>
+        <div class="video-wrapper">
+          <video id="video-fxxxboy" controls playsinline>
+            <source src="videos/8. FXXXBOY_Official.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div id="lyrics-fxxxboy" class="lyrics-overlay">
+        <div class="panel">
+          <button class="close-btn" onclick="toggleLyrics('fxxxboy')">✕</button>
+          <h3>🎤 FXXXBOY — Lyrics</h3>
+          <div class="lyrics-text">
+[Verse 1]
+Everybody needs love
+Do you, do you really wanna go down that road tonight?
+Do you, do you? We already tried it once or twice
+Just to end up hitting the wall, mm
+
+[Pre-Chorus]
+If my signals mixed and messy
+Bet you think it's destiny
+Call my ex, send late night texts
+'Cause I get off on jealousy
+Keep your expectations
+Underneath the pavement
+Guess karma's a bitch
+How's it feel? Now I'm the fuckboy
+
+[Chorus]
+It's the way that it goes
+Call me icy, icy, yeah, you made me ice cold, uh
+I saw it all, front row
+Should've won a prize for the stories you told
+Oh, oh, oh, oh
+Played the game, but I kept the score
+How's it feel? Now I'm the fuckboy
+
+[Verse 2]
+Uh, phone is unavail', unavail'
+If you wanna hit me, try my other cell 'cause I ain't pickin' up
+Had enough, beep, beep, da-da-da
+If you play with my emotions, you already know what's up
+I'm so tired of the fake love
+Can't no tears ruin my makeup
+Say, how do you sleep knowing
+That my love was like heaven 'til you gave me hell?
+
+[Pre-Chorus]
+If my signals mixed and messy
+Bet you think it's destiny
+Call my ex, send late night texts
+'Cause I get off on jealousy
+Keep your expectations
+Underneath the pavement
+Guess karma's a bitch
+How's it feel? Now I'm the fuckboy
+
+[Chorus]
+It's the way that it goes
+Call me icy, icy, yeah, you made me ice cold, uh
+I saw it all, front row
+Should've won a prize for the stories you told
+Oh, oh, oh, oh
+Played the game, but I kept the score
+How's it feel? Now I'm the fuckboy
+
+[Bridge]
+Ooh, oh
+If I told you it's not that serious
+Heartbreak builds experience
+It's evident that
+You burned the bridge, I'm on fire
+You set the tone, now I'm louder
+I don't like you, I'm just bored
+How's it feel? Now I'm the fuckboy
+
+[Chorus]
+It's the way that it goes
+Call me icy, icy, yeah, you made me ice cold, uh (Call me icy)
+I saw it all, front row
+Should've won a prize for the stories you told
+Oh, oh, oh, oh
+Played your game, but I kept the score (I did, I did, I did, I did)
+How's it feel? Now I'm the fuckboy
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAPTER 5 (no lyrics) -->
+    <div id="page-chapter5" class="video-page">
+      <button class="backbtn" onclick="showPage('deadline')">&#8592; BACK</button>
+      <div class="video-container">
+        <div class="video-title">JACKET MAKING &mdash; Chapter 5</div>
+        <div class="video-wrapper">
+          <video id="video-chapter5" controls playsinline>
+            <source src="videos/9. BLACKPINK - DEADLINE JACKET MAKING FILM.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAPTER 6 (no lyrics) -->
+    <div id="page-chapter6" class="video-page">
+      <button class="backbtn" onclick="showPage('deadline')">&#8592; BACK</button>
+      <div class="video-container">
+        <div class="video-title">HONG KONG BTS &mdash; Chapter 6</div>
+        <div class="video-wrapper">
+          <video id="video-chapter6" controls playsinline>
+            <source src="videos/10. BLACKPINK - WORLD TOUR [DEADLINE] IN HONG KONG Behind the Scenes.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAPTER 7 (no lyrics) -->
+    <div id="page-chapter7" class="video-page">
+      <button class="backbtn" onclick="showPage('deadline')">&#8592; BACK</button>
+      <div class="video-container">
+        <div class="video-title">GOLDEN DISC &mdash; Chapter 7</div>
+        <div class="video-wrapper">
+          <video id="video-chapter7" controls playsinline>
+            <source src="videos/11. GOLDEN_DISc.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GALLERY PAGE ===== -->
+    <div id="page-gallery">
+      <div class="gallery-header">
+        <button class="backbtn" onclick="showPage('deadline')">&#8592; BACK</button>
+        <h2>[DEADLINE] VISUAL POSTER GALLERY</h2>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-card" onclick="openGalleryModal('albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (1).jpeg','LISA — Red light ver.')">
+          <img src="albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (1).jpeg" alt="LISA">
+          <div class="caption">LISA — Red light ver.</div>
+        </div>
+        <div class="gallery-card" onclick="openGalleryModal('albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (2).jpeg','ROSÉ — Red light ver.')">
+          <img src="albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (2).jpeg" alt="ROSÉ">
+          <div class="caption">ROSÉ — Red light ver.</div>
+        </div>
+        <div class="gallery-card" onclick="openGalleryModal('albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (3).jpeg','JISOO — Red light ver.')">
+          <img src="albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (3).jpeg" alt="JISOO">
+          <div class="caption">JISOO — Red light ver.</div>
+        </div>
+        <div class="gallery-card" onclick="openGalleryModal('albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (4).jpeg','JISOO — Statue ver.')">
+          <img src="albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (4).jpeg" alt="JISOO Statue">
+          <div class="caption">JISOO — Statue ver.</div>
+        </div>
+        <div class="gallery-card" onclick="openGalleryModal('albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (5).jpeg','JENNIE — Statue ver.')">
+          <img src="albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (5).jpeg" alt="JENNIE Statue">
+          <div class="caption">JENNIE — Statue ver.</div>
+        </div>
+        <div class="gallery-card" onclick="openGalleryModal('albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (6).jpeg','JENNIE — Red light ver.')">
+          <img src="albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (6).jpeg" alt="JENNIE Red">
+          <div class="caption">JENNIE — Red light ver.</div>
+        </div>
+        <div class="gallery-card" onclick="openGalleryModal('albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (7).jpeg','ROSÉ — Statue ver.')">
+          <img src="albumphoto/WhatsApp Image 2026-08-05 at 21.16.35 (7).jpeg" alt="ROSÉ Statue">
+          <div class="caption">ROSÉ — Statue ver.</div>
+        </div>
+        <div class="gallery-card" onclick="openGalleryModal('albumphoto/WhatsApp Image 2026-08-05 at 21.16.35.jpeg','LISA — Statue ver.')">
+          <img src="albumphoto/WhatsApp Image 2026-08-05 at 21.16.35.jpeg" alt="LISA Statue">
+          <div class="caption">LISA — Statue ver.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BLANK PAGE ===== -->
+    <div id="page-blank">
+      <div class="message">This section is empty</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== GALLERY MODAL ===== -->
+<div id="galleryModal">
+  <span class="close-btn" onclick="closeGalleryModal()">&times;</span>
+  <img id="galleryFullImg" src="" alt="full">
+  <div class="caption" id="galleryCaption"></div>
+  <a class="download-btn" id="galleryDownloadBtn" href="" download>🔥 Download Image</a>
+</div>
+
+<script>
+// ===== AUDIO & FIRE EFFECTS =====
+function playFireWhooshSound() {
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var bufferSize = ctx.sampleRate * 0.4;
+    var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    var data = buffer.getChannelData(0);
+    for (var i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    var noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    var filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(200, ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.15);
+    filter.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.4);
+    filter.Q.value = 3.0;
+    var gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.01, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.6, ctx.currentTime + 0.1);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    noise.start();
+    noise.stop(ctx.currentTime + 0.4);
+  } catch (e) {}
+}
+
+function triggerFireBall(e) {
+  var x = e.clientX || (e.touches && e.touches[0].clientX) || window.innerWidth / 2;
+  var y = e.clientY || (e.touches && e.touches[0].clientY) || window.innerHeight / 2;
+  var fire = document.createElement('div');
+  fire.className = 'fire-ball';
+  fire.style.left = x + 'px';
+  fire.style.top = y + 'px';
+  document.body.appendChild(fire);
+  setTimeout(function() { fire.remove(); }, 500);
+}
+
+function fireEffect(e) {
+  playFireWhooshSound();
+  triggerFireBall(e);
+}
+
+// ===== NAVIGATION =====
+function showPage(page) {
+  document.querySelectorAll('[id^="page-"]').forEach(function(el) {
+    el.style.display = 'none';
+  });
+  var target = document.getElementById('page-' + page);
+  if (target) {
+    target.style.display = (page === 'blank') ? 'flex' : 'block';
+  }
+  document.querySelectorAll('.navitem').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.page === page);
+  });
+  // Restart background video when home is shown
+  if (page === 'deadline') {
+    var bg = document.querySelector('#page-deadline .bg-video');
+    if (bg) {
+      bg.play().catch(function() {});
+    }
+  }
+  // Close lyrics overlays
+  document.querySelectorAll('.lyrics-overlay').forEach(function(el) {
+    el.style.display = 'none';
+  });
+}
+
+// ===== OPEN VIDEO =====
+var currentVideoId = null;
+
+function openVideo(filename, title, pageId) {
+  fireEffect(event);
+  if (currentVideoId) {
+    var oldVid = document.getElementById('video-' + currentVideoId);
+    if (oldVid) {
+      oldVid.pause();
+      oldVid.currentTime = 0;
+    }
+  }
+  currentVideoId = pageId;
+  showPage(pageId);
+  document.querySelectorAll('.chapter').forEach(function(el) {
+    el.classList.remove('active-chapter');
+  });
+  var activeChapter = document.getElementById('ch-' + pageId);
+  if (activeChapter) activeChapter.classList.add('active-chapter');
+  setTimeout(function() {
+    var vid = document.getElementById('video-' + pageId);
+    if (vid) {
+      vid.play().catch(function(e) {});
+    }
+  }, 200);
+}
+
+// ===== LYRICS TOGGLE =====
+function toggleLyrics(id) {
+  var overlay = document.getElementById('lyrics-' + id);
+  if (overlay) {
+    overlay.style.display = (overlay.style.display === 'flex') ? 'none' : 'flex';
+  }
+}
+
+// ===== GALLERY =====
+function openGalleryModal(imgSrc, titleText) {
+  fireEffect(event);
+  var modal = document.getElementById('galleryModal');
+  document.getElementById('galleryFullImg').src = imgSrc;
+  document.getElementById('galleryCaption').textContent = titleText;
+  document.getElementById('galleryDownloadBtn').href = imgSrc;
+  modal.classList.add('show');
+}
+
+function closeGalleryModal() {
+  document.getElementById('galleryModal').classList.remove('show');
+}
+
+// ===== SIDEBAR CLICKS =====
+document.querySelectorAll('.navitem').forEach(function(btn) {
+  btn.addEventListener('click', function(e) {
+    var page = this.dataset.page;
+    if (page === 'blank') { alert('Coming soon!'); return; }
+    fireEffect(e);
+    showPage(page);
+  });
+});
+
+// ===== BACK BUTTONS =====
+document.querySelectorAll('.backbtn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    showPage('deadline');
+  });
+});
+
+// ===== MODAL CLOSE ON BACKDROP =====
+document.getElementById('galleryModal').addEventListener('click', function(e) {
+  if (e.target === this) closeGalleryModal();
+});
+
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeGalleryModal();
+    document.querySelectorAll('.lyrics-overlay').forEach(function(el) {
+      el.style.display = 'none';
+    });
+  }
+});
+
+console.log('✅ Mobile‑optimized album ready!');
+</script>
+
+</body>
+</html>
